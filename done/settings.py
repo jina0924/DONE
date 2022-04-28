@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os, json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-secret_file = os.path.join(BASE_DIR, 'secrets.json')     # <파일명>.json을 불러와 줍니다.
+import os, json		                                    #json을 읽어오기 위해 json을 추가해 줍니다.
+from django.core.exceptions import ImproperlyConfigured # 예외 처리를 위해 불러와줍니다.
 
-with open(secret_file, 'r') as f:                         # open as로 secret.json을 열어줍니다.
+# ⇩ 여기를 본인 파일명에 맞게 고쳐주시면 됩니다.
+secret_file = os.path.join(BASE_DIR, 'secret_key.json') 	# <파일명>.json을 불러와 줍니다.
+
+with open(secret_file, 'r') as f: 						# open as로 secret.json을 열어줍니다.
     secrets = json.loads(f.read())
 
-def get_secret(setting, secrets=secrets):                 # 예외 처리를 통해 오류 발생을 검출합니다.
+def get_secret(setting, secrets=secrets): 				# 예외 처리를 통해 오류 발생을 검출합니다.
     try:
         return secrets[setting]
     except KeyError:
@@ -45,7 +48,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'accounts',
-    'achievements',
+    'stamps',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,7 +72,7 @@ ROOT_URLCONF = 'done.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates',],
+        'DIRS': [BASE_DIR, 'templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

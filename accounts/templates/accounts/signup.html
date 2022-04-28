@@ -1,24 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="text-center  d-flex justify-content-center">
-    <main class="form-signin">
-      <form action="{% url 'accounts:signup' %}" method="POST">
-        {% csrf_token %}
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-        <div class="form-floating">
-          <input type="email" id="floatingInput" class="form-control" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
-        </div>
-        <div class="form-floating">
-          <input type="password" id="floatingPassword" class="form-control" placeholder="Password">
-          <label for="floatingPassword">Password</label>
-        </div>
-        <br>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-        <p class="mt-5 mb-3 text-muted">© 2022</p>
-      </form>
-    </main>
-  </div>
-
+  <h1>Sign up</h1>
+  <form action="{% url 'accounts:signup' %}" method='POST'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="sign up">
+  </form>
+  {% comment %} <a href="{% url 'stamps:index' %}">BACK</a> {% endcomment %}
 {% endblock content %}
