@@ -37,4 +37,6 @@
 
 
 
-![모델링](README.assets/Done_table.png)
+### 🦩ERD
+
+![image-20220428233249450](README.assets/image-20220428233249450.png)
