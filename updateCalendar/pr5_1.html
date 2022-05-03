@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/ef44c12d4a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- 달력만들기 진행 중 220503 -->
+  
+  <!-- 날짜 데이터 입력 받기 => 추후 Django와 합쳐지면 없어질 부분 -->
+  <!-- 날짜 데이터 입력은 yyyy-mm-dd 형식으로 입력 -->
+  <form id="dateinput">
+    <input type="text">
+    <input type="text">
+    <input type="submit" value="submit">
+  </form>
+  <!-- 달력이 저장될 부분 -->
+  <div id="saveCalendar"></div>
+
+
+  <script>
+    // 입력 받은 날짜 데이터 가져오기
+    const inputDate = document.querySelector('#dateinput')
+    inputDate.addEventListener('submit', function(event){
+      const inputStart = event.target[0].value  // 시작 날짜
+      const inputEnd = event.target[1].value    // 종료 날짜
+      event.preventDefault()
+      checkPeriod(inputStart, inputEnd) // checkPeriod 함수로 인자들 넘기기
+
+    })
+
+    function checkPeriod(start, end){                 
+      const startYear = parseInt(start.slice(0, 4))     // 시작 날짜 년도
+      const startMonth = parseInt(start.slice(5, 7))    // 시작 날짜 월
+      const startDate = parseInt(start.slice(8, 10))    // 시작 날짜 일
+
+      const endYear = parseInt(end.slice(0, 4))       // 종료 날짜 년도
+      const endMonth = parseInt(end.slice(5, 7))      // 종료 날짜 월
+      const endDate = parseInt(end.slice(8, 10))      // 종료 날짜 일
+
+      if (startYear === endYear){               // 같은 년도에 시작해서 끝난다면 (현재 다른 년도는 구현 안되어있음)
+        if (startMonth === endMonth){           // 같은 월에 시작해서 끝난다면
+          buildCalendar(start)                  // buildCalendar 함수에 시작 날짜 정보를 인자로 보내기
+        } else {
+          for (let a = startMonth; a <= endMonth; a++){     // 시작 월과 종료 월이 다르다면 시작 월에서 종료 월까지 반복문 진행
+            if (a < 10){                                    // month number가 한자리 수라면, '0'추가 
+              a = '0' + String(a)
+            } 
+            buildCalendar(String(startYear)+'-'+String(a)+'-01')  // yyyy-mm-01 날짜로 새로운 달력 생성
+          }
+        }
+      } 
+    }
+
+    function buildCalendar(input){
+      const year = input.slice(0, 4)        // year 정의
+      const month = input.slice(5, 7)       // month 정의
+      const date = input.slice(8, 10)       // date 정의
+      const startDate = new Date(year, month-1, date)   // startDate = Date 함수 실행 (workshop때 사용했던 함수)
+      // month에 -1 하는 이유 : month는 시작이 0부터라서 (나머지는 1부터 시작) 
+      
+      const firstDay = new Date(year, month-1, 1).getDay()  // Date의 getDay 사용해서 달의 첫번째 날짜의 요일 변수 정의
+      const lastDate = new Date(year, month, 0).getDate()   // Date의 getDate 사용해서 달의 마지막 날짜 변수 정의, // month, 0 으로 getDate할 시 전 달의 마지막 일수 출력
+      const lastDay = new Date(year, month, 0).getDay()     // Date의 getDay 사용해서 달의 마지막 날짜의 요일 변수 정의
+
+      // console.log(firstDay, lastDay)
+      const body = document.querySelector('#saveCalendar')  // id : saveCalendar인 div 가져오기
+      const table = document.createElement('table')         // table 요소 새로 만들기
+
+      const captions = document.createElement('caption')     // table의 제목이 되는 caption 새로 만듥리
+      captions.setAttribute('class', 'display-inline-block') // captions에 가운데 정렬을 위한 class 삽입 
+      
+      const leftButton = document.createElement('button')   // 달력 넘기기 위한 왼쪽 button 태그 생성
+      leftButton.setAttribute('type', 'submit')             // type 추가
+      const iTag = document.createElement('i')              // i 태그 추가
+      iTag.setAttribute('class', 'fas fa-arrow-left-long')
+      leftButton.setAttribute('class', 'float-left')
+      leftButton.append(iTag)       // i tag 버튼에 추가
+  
+
+      const theMonth = document.createElement('p')    // table 제목 설정을 위한 p tag
+      theMonth.setAttribute('class', 'themonth')      
+      theMonth.innerText = `${year}년 ${month}월`     
+      
+
+      const rightButton = document.createElement('button')  // 오른쪽 버튼, 왼쪽 버튼 생성과 동일
+      rightButton.setAttribute('type', 'submit')
+      const iTag2 = document.createElement('i')
+      iTag2.setAttribute('class', 'fas fa-arrow-right-long')
+      rightButton.setAttribute('class', 'float-right')
+      rightButton.append(iTag2)
+      
+
+      captions.append(leftButton)   // captions에 차례로 왼쪽 버튼, 제목, 오른쪽 버튼 추가
+      captions.append(theMonth)
+      captions.append(rightButton)
+      table.append(captions)      // table에 captions 추가
+
+      const newRow = document.createElement('tr')     // tr(행) 생성
+      table.append(newRow)
+      const dayLists = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] 
+      
+
+      for (dayList of dayLists){
+        const td = document.createElement('td')   // td(열) 생성
+        td.innerText = dayList
+        if (dayList === 'SUN'){   // 일요일이면 sunday 클래스 => 색 변환을 위해
+          td.setAttribute('class', 'sunday')
+        }
+        td.className += ('day') // class에 day 추가
+        newRow.append(td)   // tr에 td 추가
+      }
+      
+      
+      let cntWeek = null    // cntWeek 변수 생성
+      if (lastDate === 28){ // 2월이면
+        if (firstDay === 0){    // 첫번째 날이 일요일이면, 
+          cntWeek = 4     // 한 달에 총 4주
+        } else{           // 아니라면 5주
+          cntWeek = 5
+        }
+      } else{   // 2월이 아니면
+        if ((lastDate === 31 && firstDay >= 5) || (lastDate === 30 && firstDay === 6)){ // 마지막 날이 31일, 첫번째 날이 금요일이후 or 30일 + 토요일이라면
+          cntWeek = 6   // 총 6주
+        } else{
+          cntWeek = 5   // 아니라면 총 5주
+        }
+
+      }
+      let firstSunday   // firstSunday => 일요일에 색깔을 입히기 위해 만든 코드, 아직 미완성
+      if (firstDay===true){
+        firstSunday = 7-firstDay
+      }else{
+        firstSunday = 0
+      }
+      let sundayList = []
+      for (let i=firstSunday; i <= lastDate; i += 7){
+        sundayList.push(i)
+      }
+      
+
+
+      let cnt = 1   // 달력 생성, cnt는 date, 날짜임
+      for (let i=0; i<cntWeek; i++){     //i : 주
+        const row = document.createElement('tr')  // 새로운 행 생성
+        for (let j=0; j<7; j++){    // j : 요일
+          if (i===0){     // 첫째 주라면
+            const cell = document.createElement('td')   // 열 생성
+            if (j >= firstDay){   // 요일이 첫번째 날짜 이후라면
+              cell.innerText = cnt    // cell.innerText = cnt(날짜)
+              cnt += 1
+            }
+            row.append(cell)    // row에 추가
+          } else if (i != 0 && i != cntWeek-1){   // 첫, 마지막 주가 아니라면
+            const cell = document.createElement('td') // 위 과정 반복
+            cell.innerText = cnt
+            cnt += 1
+            row.append(cell)
+          } else if (i===cntWeek-1){    // 마지막 주라면
+            if (j<=lastDay){    // j가 해당되는 값이면
+              const cell = document.createElement('td')   // 열 추가 후 append
+            cell.innerText = cnt
+            cnt += 1
+            row.append(cell)
+            } else{break}   // 아니라면 종료
+          }
+          
+        }
+        table.append(row)   // table에 row(한 주) 추가
+      }
+      body.append(table)    // body에 table 추가
+    }
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

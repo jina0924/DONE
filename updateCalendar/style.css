@@ -1,0 +1,42 @@
+html, body {
+  box-sizing: border-box;
+  padding: 100;
+  margin: 100;
+}
+
+table {
+  width: 700px;
+  margin: 30px;
+  padding: 20px 20px 10px;
+  text-align: center;
+  font-weight: 800;
+  border: 1px solid #ddd;
+  cursor: default;
+  table-layout: fixed;
+}
+.day {
+  height: 50px;
+  text-align: center;
+}
+
+.sunday {
+  color:red;
+}
+tr{
+  height: 100px;
+  /* background-color: yellow; */
+  text-align: center;
+}
+.themonth {
+  font-size: 30px;
+  display: inline-block;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+button {
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+}
+
