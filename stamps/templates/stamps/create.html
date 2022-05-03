@@ -7,6 +7,23 @@
   <button class='btn btn-primary'>제출</button>
 </form>
 {% endblock content %}
+{% block script %}
+  <script>
+    // 시작 날짜, 목표 날짜 범위 잘 맞추기
+    const startDateForm = document.querySelector('.start-date-form')
+    const endDateForm = document.querySelector('.end-date-form')
+    const form = document.querySelector("body > div > form")
+
+    form.addEventListener('submit', (event)=>{
+      if (startDateForm.value >= endDateForm.value) {
+        event.preventDefault()
+        endDateForm.setAttribute('min', startDateForm.value)    // 종료날짜의 최소값 변경 시작 날짜의 뒤
+        alert('종료 날짜는 시작 날짜의 뒤에 있어야 합니다!')
+        console.log(alert)
+      }
+    })
+  </script>
+{% endblock script %}
 
 
 
