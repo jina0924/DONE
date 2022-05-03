@@ -1,19 +1,49 @@
 from django import forms
 from .models import Goal, Daily
 
+from datetime import datetime, timedelta
+now = datetime.now()
+nowDate = now.strftime('%Y-%m-%d')
+nextMonth = (now + timedelta(weeks=4)).strftime('%Y-%m-%d')
+tomorrow = (now + timedelta(days=1)).strftime('%Y-%m-%d')
+
 class GoalForm(forms.ModelForm):
     start_date = forms.DateField(
         widget = forms.DateInput(
             attrs={
-                'type': 'date'
+                'type': 'date',
+                'value': nowDate,
+                'min': nowDate,
+                'class': 'start-date-form form-control',
+            }
+        )
+    )
+    
+    end_date = forms.DateField(
+        widget = forms.DateInput(
+            attrs={
+                'type': 'date',
+                'value': nextMonth,
+                'min': tomorrow,
+                'class': 'end-date-form form-control',
             }
         )
     )
 
-    end_date = forms.DateField(
-        widget = forms.DateInput(
+    content = forms.CharField(
+        widget=forms.Textarea(
             attrs={
-                'type': 'date'
+                'class': 'form-control',
+                'placeholder':'목표를 작성해주세요!'
+            }
+        )
+    )
+
+    target_amount = forms.IntegerField(
+        widget = forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder':'목표 횟수를 설정해주세요!'
             }
         )
     )
@@ -24,8 +54,25 @@ class GoalForm(forms.ModelForm):
 
 
 
-
 class DailyForm(forms.ModelForm):
+
+    success = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+                'type':'checkbox',
+                'class':'form-check',
+            }
+        )
+    )
+
+    memo = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'class':'form-control create-date',
+                'placeholder':'세부 내용을 작성해주세요!'
+            }
+        )
+    )
 
     class Meta:
         model = Daily

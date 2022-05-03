@@ -2,7 +2,65 @@
 
 {% block content %}
 <h1>Calendar</h1>
+<hr>
+{% if user.is_authenticated %}
+  {% for goal in user.goal_set.all %}
+  <goal data-goal-id="{{goal.pk}}"></goal>
+  <h3>목표: {{goal.content}}</h3>
+  <p>시작: {{goal.start_date}} ~ 종료: {{goal.end_date}}</p>
+  <p>목표량: {{goal.target_amount}}</p>
+  
+  <ul id="dailylist-{{goal.pk}}">
+    {% for daily in goal.daily_set.all %}
+    {% if daily.success == 1 %}
+    <li>{{daily.created_at}}</li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  <p>달성 횟수: {{goal.daily_set.all.count}}</p>
+  <form action="{% url 'stamps:create_daily' goal.pk %}" method="POST" id="daily-form-{{goal.pk}}">
+    {% csrf_token %}
+    {{daily_form.as_p}}
+    <input type="submit" value="제출하기">
+  </form>
+  <hr>
+  {% endfor %}
+{% endif %}
 {% endblock content %}
+
+{% block script %}
+<script>
+  // 오늘 달성한 것은 두번 이상 체크하지 못하게 만들었다.
+  const dateToString = function (day) {
+    const year = day.getFullYear()
+    const month = day.getMonth() + 1 
+    const date = day.getDate()
+    datestring = `${year}년 ${month >= 10 ? month : month}월 ${date >= 10 ? date : date}일`
+    return datestring
+  }
+  const goals = document.querySelectorAll('goal')
+  goals.forEach(goal => {
+    const goalId = goal.dataset.goalId
+    const dailyForm = document.querySelector(`#daily-form-${goalId}`)
+    const dailyList = document.querySelector(`#dailylist-${goalId} > li:last-child`)
+    if (dailyList) {
+      const latest = dailyList.innerText
+      dailyForm.addEventListener('submit', event => {
+      let today = new Date()
+      let todayString = dateToString(today)
+      console.log(todayString)
+      if (todayString <= dailyList.innerText) {
+        event.preventDefault()
+        alert('오늘은 이미 달성했습니다. 내일도 화이팅!!!!')
+      }
+    })
+    }
+  })
+</script>
+{% endblock script %}
+
+
+
 
 
 
