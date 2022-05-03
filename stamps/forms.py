@@ -56,6 +56,24 @@ class GoalForm(forms.ModelForm):
 
 class DailyForm(forms.ModelForm):
 
+    success = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+                'type':'checkbox',
+                'class':'form-check',
+            }
+        )
+    )
+
+    memo = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'class':'form-control create-date',
+                'placeholder':'세부 내용을 작성해주세요!'
+            }
+        )
+    )
+
     class Meta:
         model = Daily
         exclude = ['user', 'goal',]

@@ -16,3 +16,4 @@ class Daily(models.Model):
     goal = models.ForeignKey(Goal, on_delete=models.CASCADE)
     success = models.BooleanField(default=False)
     memo = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
