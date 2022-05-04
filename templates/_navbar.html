@@ -7,6 +7,7 @@
 
         
           {% if user.is_authenticated %}
+            <a class="btn btn-primary mx-1" href="{% url 'stamps:create'%}">Create</a>
             <form class='my-1' action="{% url 'accounts:logout' %}" method='POST'>
               {% csrf_token %}
               <input type="submit" value="Logout">
