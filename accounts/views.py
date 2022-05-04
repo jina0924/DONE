@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods, require_POST
 from .forms import CustomUserChangeForm, CustomUserCreationForm
@@ -100,3 +101,24 @@ def profile(request, username):
         'person': person,
     }
     return render(request, 'accounts/profile.html', context)
+
+
+@require_POST
+def follow(request, user_pk):
+    me = request.user
+    if me.is_authenticated:
+        User = get_user_model()
+        you = get_object_or_404(User, pk=user_pk)
+        if me != you:
+            if you.followers.filter(pk=me.pk).exists():
+                you.followers.remove(me)
+                followed = False
+            else:
+                you.followers.add(me)
+                followed = True
+        context = {
+            'followed': followed,
+            'followers_count': you.followers.count(),
+        }
+        return JsonResponse(context)
+    return redirect('accounts:login')
