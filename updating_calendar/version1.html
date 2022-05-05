@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <form id="dateinput">
+    <input type="text">
+    <input type="submit" value="submit">
+  </form>
+  <div id="saveCalendar"></div>
+  <script>
+    const inputDate = document.querySelector('#dateinput')
+    inputDate.addEventListener('submit', function(event){
+      const input = event.target[0].value
+      event.preventDefault()
+      buildCalendar(input)
+    })
+    function buildCalendar(input){
+      const year = input.slice(0, 4)
+      const month = input.slice(5, 7)
+      const date = input.slice(8, 10)
+      const startDate = new Date(year, month-1, date)
+      // console.log(startDate)
+      
+      const firstDay = new Date(year, month-1, 1).getDay()
+      const lastDate = new Date(year, month, 0).getDate()
+      const lastDay = new Date(year, month, 0).getDay()
+
+      console.log(firstDay, lastDay)
+      const body = document.querySelector('#saveCalendar')
+      const table = document.createElement('table')
+      const newRow = document.createElement('tr')
+      table.append(newRow)
+      const dayLists = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+      for (dayList of dayLists){
+        const tr = document.createElement('td')
+        tr.innerText = dayList
+        newRow.append(tr)
+      }
+      
+      
+      let cntWeek = null
+      if (lastDate === 28){
+        if (firstDay === 0){
+          cntWeek = 4
+        } else{
+          cntWeek = 5
+        }
+      } else{
+        if ((lastDate === 31 && firstDay >= 5) || (lastDate === 30 && firstDay === 6)){
+          cntWeek = 6
+        } else{
+          cntWeek = 5
+        }
+
+      }
+      console.log(cntWeek)
+      let cnt = 1
+      for (let i=0; i<cntWeek; i++){
+        const row = document.createElement('tr')
+        for (let j=0; j<7; j++){
+          if (i===0){
+            const cell = document.createElement('td')
+            if (j >= firstDay){
+              cell.innerText = cnt
+              cnt += 1
+            }
+            row.append(cell)
+          } else if (i != 0 && i != cntWeek-1){
+            const cell = document.createElement('td')
+            cell.innerText = cnt
+            cnt += 1
+            row.append(cell)
+          } else if (i===cntWeek-1){
+            if (j<=lastDay){
+              const cell = document.createElement('td')
+            cell.innerText = cnt
+            cnt += 1
+            row.append(cell)
+            } else{break}
+          }
+          
+        }
+        table.append(row)
+      }
+      body.append(table)
+    }
+  </script>
+</body>
+</html>
