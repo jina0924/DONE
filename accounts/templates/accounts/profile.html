@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{{ person.username.upper }}</h1>
   <br>
   {% with followings=person.followings.all followers=person.followers.all %}
-    <div>
-      <div>
+    <div class="user-component">
+      <img src="{{ person.image.url }}" alt="{{ person.username}}프로필 이미지" class="user-component__profile">
+      <div class='d-inline-block'>
+        <h2>{{ person.username.upper }}</h2>
         목표
         <span id="goal-count" class='fw-bold'>{{ person.goal_set.count }}</span>
         &emsp;팔로워

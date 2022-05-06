@@ -60,3 +60,15 @@ tr{
   margin: 30px;
 }
 
+
+.user-component {
+  padding: 20px 10px;
+  flex-direction: column;
+}
+
+
+.user-component__profile {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
