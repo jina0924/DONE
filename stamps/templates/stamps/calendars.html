@@ -8,18 +8,17 @@
   
 {% block script %}
   <script>
-    const practice = document.querySelector('.practice')
-    const url = 'http://127.0.0.1:8000/stamps/calendar/api'
-    const calendarNumbers = document.querySelector('#calendarNumbers')
-    const calendarTitle = document.querySelector('#calendarTitle')
-    const calendarBody = document.querySelector('#calendarBody')
-    const tableList = []
+    const url = 'http://127.0.0.1:8000/stamps/calendar/api'           // api 주소
+    const calendarNumbers = document.querySelector('#calendarNumbers')  // 각 목표 별 번호를 담는 공간
+    const calendarTitle = document.querySelector('#calendarTitle')      // yyyy 년 mm 월 공간
+    const calendarBody = document.querySelector('#calendarBody')        // 달력 들어가는 공간
+    const tableList = []      // 각 달력 담는 배열
 
     axios.get(url)
       .then(function (response){
-        const datas = response.data
+        const datas = response.data     // api 데이터
         
-        let cntNum = 0
+        let cntNum = 0                  
         const leftButton = document.createElement('button')   // 달력 넘기기 위한 왼쪽 button 태그 생성           // type 추가
         leftButton.setAttribute('id', 'leftButton')
         const iTag = document.createElement('i')              // i 태그 추가
@@ -36,78 +35,77 @@
         iTag2.setAttribute('class', 'fas fa-arrow-right-long')
         rightButton.append(iTag2)
         rightButton.setAttribute('id', 'rightButton')
-        calendarTitle.append(leftButton, theMonthYear, rightButton)
+        calendarTitle.append(leftButton, theMonthYear, rightButton) // yyyy 년 mm 월에 버튼 추가
 
         for (data of datas){
-          cntNum += 1
-          const button = document.createElement('button')
-          button.setAttribute('id', 'buttonForTable')
-          button.setAttribute('class', `${cntNum}`)
-          button.innerText = cntNum
-          calendarNumbers.append(button)
-          checkPeriod(data.start_date, data.end_date, cntNum)
+          cntNum += 1     // 데이터 번호
+          const button = document.createElement('button') // 버튼 생성
+          button.setAttribute('id', 'buttonForTable')     // id 추가
+          button.setAttribute('class', `${cntNum}`)       // 클래스 => 데이터 번호로 추가
+          button.innerText = cntNum                       // 버튼 numbering
+          calendarNumbers.append(button)                  // 버튼을 html body div에 추가
+          checkPeriod(data.start_date, data.end_date, cntNum) // 달력 생성 함수 실행
         }
       
-        const buttons = document.querySelectorAll('#buttonForTable')
+        const buttons = document.querySelectorAll('#buttonForTable')  // 모든 목표 버튼 선택
         
-        buttons.forEach( button => {
-          button.addEventListener('click', function(event) {
-            const selectingMonths = []
-            let tableId= 'table'
+        buttons.forEach( button => {  // 각 버튼 별로 행동 실행
+          button.addEventListener('click', function(event) {  // 클릭할 시 
+            const selectingMonths = []            // 나타내려는 배열 생성
+            let tableId= 'table'                  // tableId 생성
             event.preventDefault()
-            while (calendarBody.hasChildNodes()) {
+            while (calendarBody.hasChildNodes()) {  // calendarBody 초기화
               calendarBody.removeChild(
                 calendarBody.firstChild
               )
             }
 
-            tableId += String(button.getAttribute('class'))
+            tableId += String(button.getAttribute('class'))   // 버튼 클릭 시 tableId 해당 버튼의 innerText로 갱신
 
-            for (tb of tableList){
-              console.log(tableId, tb.id)
-              if (tableId === tb.id){
-                selectingMonths.push(tb)
+            for (tb of tableList){            // 달력리스트에 있는 달력들 중    
+              if (tableId === tb.id){         // 달력의 아이디가 tableId와 동일 하다면
+                selectingMonths.push(tb)      // 나타내려는 배열에 해당 달력 추가
               }
             }
-            choosingMonth(selectingMonths)
+            choosingMonth(selectingMonths)    // 달력 배치하는 함수 실행
           })
         })
       })
       
-      function drawingCalendar(addMonthTable){
-        calendarBody.append(addMonthTable)
-        const theMonthYear = document.querySelector('.themonth')
-        theMonthYear.innerText = `${addMonthTable.getAttribute('yyyy')}년 ${addMonthTable.getAttribute('mm')}월`
-        console.log(addMonthTable)
+      function drawingCalendar(addMonthTable){       // 달력 그리는 함수
+        calendarBody.append(addMonthTable)           // calendarBody에 addMonthTable(달력) 나타내기
+        const theMonthYear = document.querySelector('.themonth')  
+        theMonthYear.innerText = `${addMonthTable.getAttribute('yyyy')}년 ${addMonthTable.getAttribute('mm')}월`  
+        // 해당 달력에 대한 title 갱신 (yyyy년 mm 월)
       }
 
-      function choosingMonth(sm){
-        const firstMonth = sm[0]
-        const lastMonth = sm[sm.length-1]
-        drawingCalendar(firstMonth)
-        let idx = 0
-        let monthNow = parseInt(firstMonth.getAttribute('mm'))
+      function choosingMonth(sm){           // sm : 나타내려는 목표에 해당하는 달력을 담고있는 리스트
+        const firstMonth = sm[0]            // 첫번째 달
+        const lastMonth = sm[sm.length-1]   // 마지막 달
+        drawingCalendar(firstMonth)         // 첫번째 달에 대해 달력 그리기
+        let idx = 0   // 인덱스
+        let monthNow = parseInt(firstMonth.getAttribute('mm'))    // 첫번째 달의 month 가져오기
 
-        const fm = parseInt(firstMonth.getAttribute('mm'))
-        const lm = parseInt(lastMonth.getAttribute('mm'))
+        const fm = parseInt(firstMonth.getAttribute('mm'))  // first month
+        const lm = parseInt(lastMonth.getAttribute('mm'))   // last month
 
-        const lb = document.querySelector('#leftButton')
-        const rb = document.querySelector('#rightButton')
+        const lb = document.querySelector('#leftButton')  // 왼쪽 버튼
+        const rb = document.querySelector('#rightButton') // 오른쪽 버튼
         
-        lb.setAttribute('class', 'smallButton')
-        rb.setAttribute('class', 'smallButton')
+        lb.setAttribute('class', 'smallButton') // 왼쪽 버튼에 class 추가
+        rb.setAttribute('class', 'smallButton') // 오른쪽 버튼에 class 추가
 
-        lb.addEventListener('click', function(event) {
+        lb.addEventListener('click', function(event) {  // 왼쪽 버튼 클릭 시
           event.preventDefault()
           if (monthNow > fm){
-            monthNow -= 1
+            monthNow -= 1                           // monthNow, 인덱스 -= 1
             idx -= 1
-            while (calendarBody.hasChildNodes()) {
+            while (calendarBody.hasChildNodes()) {  // calendarBody 초기화
               calendarBody.removeChild(
                 calendarBody.firstChild
               )
             }
-            drawingCalendar(sm[idx])
+            drawingCalendar(sm[idx])      // 인덱스에 해당하는 달력 그리기 실행, 오른쪽도 왼쪽과 같은 메커니즘 
           } 
         })
 
