@@ -93,6 +93,9 @@
 
         const lb = document.querySelector('#leftButton')
         const rb = document.querySelector('#rightButton')
+        
+        lb.setAttribute('class', 'smallButton')
+        rb.setAttribute('class', 'smallButton')
 
         lb.addEventListener('click', function(event) {
           event.preventDefault()
