@@ -4,31 +4,42 @@
   <br>
   {% with followings=person.followings.all followers=person.followers.all %}
     <div class="user-component">
-      <img src="{{ person.image.url }}" alt="{{ person.username}}프로필 이미지" class="user-component__profile">
-      <div class='d-inline-block'>
-        <h2>{{ person.username.upper }}</h2>
+      <div id="profile-img" class='d-inline-block'>
+        <img src="{{ person.image.url }}" alt="{{ person.username}}프로필 이미지" class="user-component__profile">
+      </div>
+      <section class="d-inline-block">
+        <div class="user-name">
+          <h2 class="d-inline me-4">{{ person.username }}</h2>
+          {% if user != person %}
+            <form data-person-id="{{ person.pk }}" id="follow-form" class="d-inline">
+              {% csrf_token %}
+              {% if user in followers %}
+                <input type="submit" value="unfollow" id="follow-button" class='btn btn-primary'>
+              {% else %}
+                <input type="submit" value="follow" id="follow-button" class='btn btn-outline-primary'>  
+              {% endif %}
+            </form>
+          {% endif %}
+        </div>
         목표
         <span id="goal-count" class='fw-bold'>{{ person.goal_set.count }}</span>
         &emsp;팔로워
         <span id="followers-count" class='fw-bold'>{{ followers|length }}</span>
         &emsp;팔로잉
         <span id="followings-count" class='fw-bold'>{{ followings|length }}</span>
-      </div>
+      </section>
     </div>
-    {% if user != person %}
-      <div>
-        <form data-person-id="{{ person.pk }}" id="follow-form">
-          {% csrf_token %}
-          {% if user in followers %}
-            <input type="submit" value="unfollow" id="follow-button" class='btn btn-primary'>
-          {% else %}
-            <input type="submit" value="follow" id="follow-button" class='btn btn-outline-primary'>  
-          {% endif %}
-        </form>
-      </div>
-    {% endif %}
     {% comment %} user가 획득한 타이틀(or 뱃지) {% endcomment %}
   {% endwith %}
+  <br>
+  <!-- 목표 목록 -->
+  <ul class="profile-goal-list">
+    {% for goal in person.goal_set.all %}
+    <li>{{ goal.content }}</li>
+    <br>
+    {% endfor %}
+  </ul>
+
 {% endblock content %}
 
 {% block script %}

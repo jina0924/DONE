@@ -72,3 +72,16 @@ tr{
   height: 150px;
   border-radius: 50%;
 }
+
+
+.user-name {
+  margin-bottom: 20px;
+}
+
+#profile-img {
+  margin-right: 40px;
+}
+
+.profile-goal-list {
+  list-style: none;
+}
